@@ -169,6 +169,8 @@ class _AvatarContentState extends State<AvatarContent> {
               _cachedNetworkImage = newImage;
             });
           }
+        }).catchError((_) {
+          // Image failed to load — fall back to initials/icon.
         });
       } else {
         setState(() {
@@ -187,6 +189,13 @@ class _AvatarContentState extends State<AvatarContent> {
           image: DecorationImage(
             image: _cachedNetworkImage!,
             fit: BoxFit.cover,
+            onError: (exception, stackTrace) {
+              if (mounted) {
+                setState(() {
+                  _cachedNetworkImage = null;
+                });
+              }
+            },
           ),
         ),
       );
