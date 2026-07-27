@@ -213,9 +213,22 @@ class _AvatarContentState extends State<AvatarContent> {
     if (user?.name == null || user!.name!.trim().isEmpty) return '';
 
     final nameParts = user.name!.trim().split(' ');
-    final firstInitial = nameParts.isNotEmpty ? nameParts.first[0] : '';
-    final lastInitial = nameParts.length > 1 ? nameParts.last[0] : '';
+    final firstInitial = nameParts.isNotEmpty
+        ? _firstCharacter(nameParts.first)
+        : '';
+    final lastInitial = nameParts.length > 1
+        ? _firstCharacter(nameParts.last)
+        : '';
 
     return '$firstInitial$lastInitial'.toUpperCase();
   }
+
+  /// First user-perceived character of [value], or '' when empty.
+  ///
+  /// `value[0]` returns a single UTF-16 code unit; for a name part starting
+  /// with an emoji outside the Basic Multilingual Plane (e.g. '🩷') that is an
+  /// unpaired surrogate half, and rendering it makes Text layout throw
+  /// `Invalid argument(s): string is not well-formed UTF-16`.
+  static String _firstCharacter(String value) =>
+      value.isEmpty ? '' : value.characters.first;
 }
